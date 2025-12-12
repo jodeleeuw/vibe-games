@@ -16,6 +16,13 @@ const games: Game[] = [
     description: 'Cluck into your microphone to make the chicken hop across platforms!',
     path: '/games/chicken-hop',
     emoji: '🐔'
+  },
+  {
+    id: 'spelling-ie',
+    title: 'Spelling i/e',
+    description: 'Listen to words and click the correct spelling with i or e!',
+    path: '/games/spelling-ie',
+    emoji: '📝'
   }
 ]
 
