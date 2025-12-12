@@ -1,0 +1,136 @@
+.spelling-ie {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.back-button {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.game-header h1 {
+  font-size: 2rem;
+}
+
+.scores {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.game-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.game-canvas {
+  border: 4px solid white;
+  border-radius: 8px;
+  background: #E8F4F8;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.game-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.game-overlay h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.game-overlay p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.game-overlay ul {
+  list-style: none;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.game-overlay li {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.new-high-score {
+  color: #ffd700;
+  font-size: 1.5rem !important;
+  font-weight: 600;
+}
+
+.start-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.start-button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.instructions {
+  max-width: 800px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.instructions h3 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.instructions p {
+  color: #666;
+  line-height: 1.6;
+}
