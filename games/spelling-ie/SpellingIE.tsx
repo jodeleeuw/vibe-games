@@ -12,8 +12,9 @@ interface FallingWord {
   x: number
   y: number
   speed: number
-  isCorrect: boolean
-  displayText: string
+  correctOnLeft: boolean // Which side has the correct spelling
+  clickedSide: 'left' | 'right' | null // Which side was clicked
+  clickedCorrectly: boolean | null // Whether the click was correct
 }
 
 const CANVAS_WIDTH = 800
@@ -81,7 +82,7 @@ function SpellingIE() {
 
   const createNewWord = () => {
     const wordPair = WORD_PAIRS[Math.floor(Math.random() * WORD_PAIRS.length)]
-    const isCorrectLeft = Math.random() < 0.5
+    const correctOnLeft = Math.random() < 0.5
     
     const wordId = wordIdCounterRef.current++
     const word: Word = {
@@ -93,40 +94,33 @@ function SpellingIE() {
     // Speak the correct word
     speakWord(word.correct)
 
-    // Create two falling words - one correct, one incorrect
-    const leftX = CANVAS_WIDTH / 3 - WORD_WIDTH / 2
-    const rightX = (CANVAS_WIDTH * 2) / 3 - WORD_WIDTH / 2
+    // Create one falling word showing both spellings
+    const centerX = CANVAS_WIDTH / 2 - WORD_WIDTH
 
-    const leftWord: FallingWord = {
+    const fallingWord: FallingWord = {
       word,
-      x: leftX,
+      x: centerX,
       y: -WORD_HEIGHT,
       speed: currentSpeed,
-      isCorrect: isCorrectLeft,
-      displayText: isCorrectLeft ? word.correct : word.incorrect
+      correctOnLeft,
+      clickedSide: null,
+      clickedCorrectly: null
     }
 
-    const rightWord: FallingWord = {
-      word,
-      x: rightX,
-      y: -WORD_HEIGHT,
-      speed: currentSpeed,
-      isCorrect: !isCorrectLeft,
-      displayText: !isCorrectLeft ? word.correct : word.incorrect
-    }
-
-    fallingWordsRef.current.push(leftWord, rightWord)
+    fallingWordsRef.current.push(fallingWord)
   }
 
-  const handleWordClick = (clickedWord: FallingWord) => {
-    if (!isPlaying) return
+  const handleWordClick = (clickedWord: FallingWord, side: 'left' | 'right') => {
+    if (!isPlaying || clickedWord.clickedSide !== null) return // Already clicked
 
-    // Find the pair (both words with same id)
-    const wordPair = fallingWordsRef.current.filter(w => w.word.id === clickedWord.word.id)
+    const isCorrect = (side === 'left' && clickedWord.correctOnLeft) || 
+                     (side === 'right' && !clickedWord.correctOnLeft)
     
-    if (clickedWord.isCorrect) {
-      // Correct word clicked - remove both words and increment score
-      fallingWordsRef.current = fallingWordsRef.current.filter(w => w.word.id !== clickedWord.word.id)
+    clickedWord.clickedSide = side
+    clickedWord.clickedCorrectly = isCorrect
+    
+    if (isCorrect) {
+      // Correct word clicked - increment score and remove after brief delay
       setScore(prev => prev + 1)
       
       // Increase speed gradually
@@ -134,15 +128,14 @@ function SpellingIE() {
       
       // Play success sound
       playSuccessSound()
-    } else {
-      // Wrong word clicked - make correct word fall faster (accelerate)
-      const correctWord = wordPair.find(w => w.isCorrect)
-      if (correctWord) {
-        correctWord.speed = currentSpeed * 3 // Fall 3x faster
-      }
       
-      // Remove the incorrect word
-      fallingWordsRef.current = fallingWordsRef.current.filter(w => w !== clickedWord)
+      // Remove the word after a brief delay to show feedback
+      setTimeout(() => {
+        fallingWordsRef.current = fallingWordsRef.current.filter(w => w !== clickedWord)
+      }, 300)
+    } else {
+      // Wrong word clicked - make it fall faster
+      clickedWord.speed = currentSpeed * 3
       
       // Play error sound
       playErrorSound()
@@ -227,13 +220,20 @@ function SpellingIE() {
 
       // Check if click is on any falling word
       for (const word of fallingWordsRef.current) {
+        // Each word now shows two spellings side by side
+        const leftHalfX = word.x
+        const rightHalfX = word.x + WORD_WIDTH
+        const totalWidth = WORD_WIDTH * 2
+        
         if (
-          x >= word.x &&
-          x <= word.x + WORD_WIDTH &&
+          x >= leftHalfX &&
+          x <= leftHalfX + totalWidth &&
           y >= word.y &&
           y <= word.y + WORD_HEIGHT
         ) {
-          handleWordClick(word)
+          // Determine which side was clicked
+          const side = x < rightHalfX ? 'left' : 'right'
+          handleWordClick(word, side)
           break
         }
       }
@@ -244,13 +244,10 @@ function SpellingIE() {
     const gameLoop = () => {
       const now = Date.now()
 
-      // Spawn new word pair at intervals
-      if (now - lastSpawnTimeRef.current > spawnIntervalRef.current) {
+      // Spawn new word only if no words are currently falling
+      if (fallingWordsRef.current.length === 0 && now - lastSpawnTimeRef.current > 500) {
         createNewWord()
         lastSpawnTimeRef.current = now
-        
-        // Gradually decrease spawn interval (make it harder)
-        spawnIntervalRef.current = Math.max(1500, spawnIntervalRef.current - 50)
       }
 
       // Update word positions
@@ -262,8 +259,8 @@ function SpellingIE() {
         if (word.y >= CANVAS_HEIGHT) {
           wordsToRemove.push(word)
           
-          // Only lose a life if the correct word hits the ground
-          if (word.isCorrect) {
+          // Lose a life if word wasn't clicked correctly or at all
+          if (word.clickedCorrectly !== true) {
             setLives(prev => {
               const newLives = prev - 1
               if (newLives <= 0) {
@@ -282,8 +279,7 @@ function SpellingIE() {
 
       // Remove words that hit the ground
       for (const word of wordsToRemove) {
-        const wordId = word.word.id
-        fallingWordsRef.current = fallingWordsRef.current.filter(w => w.word.id !== wordId)
+        fallingWordsRef.current = fallingWordsRef.current.filter(w => w !== word)
       }
 
       // Draw
@@ -306,25 +302,43 @@ function SpellingIE() {
 
       // Draw falling words
       for (const word of fallingWordsRef.current) {
+        const totalWidth = WORD_WIDTH * 2
+        const leftText = word.correctOnLeft ? word.word.correct : word.word.incorrect
+        const rightText = word.correctOnLeft ? word.word.incorrect : word.word.correct
+        
         // Shadow
         ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
-        ctx.fillRect(word.x + 3, word.y + 3, WORD_WIDTH, WORD_HEIGHT)
+        ctx.fillRect(word.x + 3, word.y + 3, totalWidth, WORD_HEIGHT)
 
-        // Word box
-        ctx.fillStyle = word.isCorrect ? '#90EE90' : '#FFB6C1'
+        // Determine colors based on click state
+        let leftColor = '#E8E8E8' // Neutral gray
+        let rightColor = '#E8E8E8' // Neutral gray
+        
+        if (word.clickedSide === 'left') {
+          leftColor = word.clickedCorrectly ? '#90EE90' : '#FFB6C1'
+        } else if (word.clickedSide === 'right') {
+          rightColor = word.clickedCorrectly ? '#90EE90' : '#FFB6C1'
+        }
+
+        // Left box
+        ctx.fillStyle = leftColor
         ctx.fillRect(word.x, word.y, WORD_WIDTH, WORD_HEIGHT)
-
-        // Border
         ctx.strokeStyle = '#333'
         ctx.lineWidth = 3
         ctx.strokeRect(word.x, word.y, WORD_WIDTH, WORD_HEIGHT)
 
-        // Text
+        // Right box
+        ctx.fillStyle = rightColor
+        ctx.fillRect(word.x + WORD_WIDTH, word.y, WORD_WIDTH, WORD_HEIGHT)
+        ctx.strokeRect(word.x + WORD_WIDTH, word.y, WORD_WIDTH, WORD_HEIGHT)
+
+        // Text for both sides
         ctx.fillStyle = '#000'
         ctx.font = 'bold 24px Arial'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        ctx.fillText(word.displayText, word.x + WORD_WIDTH / 2, word.y + WORD_HEIGHT / 2)
+        ctx.fillText(leftText, word.x + WORD_WIDTH / 2, word.y + WORD_HEIGHT / 2)
+        ctx.fillText(rightText, word.x + WORD_WIDTH + WORD_WIDTH / 2, word.y + WORD_HEIGHT / 2)
       }
 
       // Draw score and lives
@@ -387,11 +401,11 @@ function SpellingIE() {
             <h2>Spelling Challenge!</h2>
             <p>Listen to the word and click the correct spelling</p>
             <ul>
-              <li>Words with 'i' or 'e' will fall from the top</li>
+              <li>One word box showing both spellings will fall from the top</li>
               <li>Listen carefully to the word spoken</li>
-              <li>Click the correct spelling before it hits the ground</li>
-              <li>If you click wrong, the correct word falls faster!</li>
-              <li>Don't let correct words hit the ground - you'll lose a life!</li>
+              <li>Click on the correct spelling before the box hits the ground</li>
+              <li>If you click wrong, the word falls faster!</li>
+              <li>Don't let words hit the ground without clicking correctly - you'll lose a life!</li>
             </ul>
             <button onClick={startGame} className="start-button">
               Start Game
@@ -414,10 +428,10 @@ function SpellingIE() {
       <div className="instructions">
         <h3>How to Play</h3>
         <p>
-          Listen to the word spoken out loud, then click the correct spelling!
-          Words use either 'i' or 'e' - choose wisely. If you make a mistake,
-          the correct word will fall faster. Keep the correct words from hitting
-          the ground to preserve your lives!
+          Listen to the word spoken out loud, then click on the correct spelling!
+          Each falling box shows two spellings with 'i' or 'e' - choose wisely. 
+          If you make a mistake, the word falls faster. Click correctly before 
+          words hit the ground to preserve your lives!
         </p>
       </div>
     </div>
