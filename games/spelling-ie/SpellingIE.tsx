@@ -62,6 +62,7 @@ function SpellingIE() {
   const spawnIntervalRef = useRef(2500) // Start with 2.5 seconds between words
   const wordIdCounterRef = useRef(0)
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
 
   const speakWord = (word: string) => {
     if ('speechSynthesis' in window) {
@@ -149,7 +150,10 @@ function SpellingIE() {
   }
 
   const playSuccessSound = () => {
-    const audioContext = new AudioContext()
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext()
+    }
+    const audioContext = audioContextRef.current
     const oscillator = audioContext.createOscillator()
     const gainNode = audioContext.createGain()
 
@@ -167,7 +171,10 @@ function SpellingIE() {
   }
 
   const playErrorSound = () => {
-    const audioContext = new AudioContext()
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext()
+    }
+    const audioContext = audioContextRef.current
     const oscillator = audioContext.createOscillator()
     const gainNode = audioContext.createGain()
 
@@ -349,6 +356,10 @@ function SpellingIE() {
       // Cancel any ongoing speech when component unmounts
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel()
+      }
+      // Close AudioContext when component unmounts
+      if (audioContextRef.current) {
+        audioContextRef.current.close()
       }
     }
   }, [])
