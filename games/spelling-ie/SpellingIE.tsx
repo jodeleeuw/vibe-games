@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './SpellingIE.css'
+import { WORD_PAIRS } from './wordPairs'
 
 interface Word {
   correct: string
@@ -25,25 +26,6 @@ const INITIAL_LIVES = 5
 const INITIAL_FALL_SPEED = 1
 const MAX_FALL_SPEED = 3
 const SPEED_INCREMENT = 0.1
-
-// Word pairs with i/e variations
-const WORD_PAIRS = [
-  { correct: 'kick', incorrect: 'keck' },
-  { correct: 'lick', incorrect: 'leck' },
-  { correct: 'pick', incorrect: 'peck' },
-  { correct: 'stick', incorrect: 'steck' },
-  { correct: 'thick', incorrect: 'theck' },
-  { correct: 'click', incorrect: 'cleck' },
-  { correct: 'trick', incorrect: 'treck' },
-  { correct: 'brick', incorrect: 'breck' },
-  { correct: 'quick', incorrect: 'queck' },
-  { correct: 'chick', incorrect: 'check' },
-  { correct: 'sick', incorrect: 'seck' },
-  { correct: 'wick', incorrect: 'weck' },
-  { correct: 'slick', incorrect: 'sleck' },
-  { correct: 'flick', incorrect: 'fleck' },
-  { correct: 'prick', incorrect: 'preck' },
-]
 
 function SpellingIE() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
