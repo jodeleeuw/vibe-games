@@ -1,136 +1,156 @@
 .spelling-ie {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1.5rem 2rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: var(--color-bg);
 }
 
-.game-header {
+.spelling-ie .game-header {
   width: 100%;
   max-width: 800px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-  color: white;
+  color: var(--color-cream);
 }
 
-.back-button {
-  color: white;
+.spelling-ie .back-button {
+  color: var(--color-cream);
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  transition: background 0.2s;
+  padding: 0.45rem 0.9rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.3);
+.spelling-ie .back-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.game-header h1 {
-  font-size: 2rem;
+.spelling-ie .game-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
 }
 
-.scores {
+.spelling-ie .scores {
   display: flex;
-  gap: 1rem;
-  font-size: 1.1rem;
-  font-weight: 600;
+  gap: 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(254, 249, 239, 0.7);
 }
 
-.game-container {
+.spelling-ie .game-container {
   position: relative;
   margin-bottom: 1rem;
 }
 
-.game-canvas {
-  border: 4px solid white;
-  border-radius: 8px;
+.spelling-ie .game-canvas {
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
   background: #E8F4F8;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   cursor: pointer;
 }
 
-.game-overlay {
+.spelling-ie .game-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(26, 26, 46, 0.92);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: white;
-  border-radius: 8px;
+  color: var(--color-cream);
+  border-radius: 12px;
   padding: 2rem;
   text-align: center;
 }
 
-.game-overlay h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+.spelling-ie .game-overlay h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--color-blue);
 }
 
-.game-overlay p {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+.spelling-ie .game-overlay p {
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+  color: rgba(254, 249, 239, 0.7);
 }
 
-.game-overlay ul {
+.spelling-ie .game-overlay ul {
   list-style: none;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   max-width: 600px;
 }
 
-.game-overlay li {
+.spelling-ie .game-overlay li {
   font-size: 1rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.new-high-score {
-  color: #ffd700;
-  font-size: 1.5rem !important;
-  font-weight: 600;
-}
-
-.start-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 1rem 3rem;
+  margin: 0.4rem 0;
+  padding: 0.45rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.spelling-ie .new-high-score {
+  color: var(--color-yellow) !important;
+  font-family: var(--font-display);
+  font-size: 1.4rem !important;
+  font-weight: 700;
+}
+
+.spelling-ie .start-button {
+  background: var(--color-blue);
+  color: var(--color-cream);
+  border: none;
+  padding: 0.8rem 2.8rem;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: transform 0.2s;
+  letter-spacing: 0.01em;
 }
 
-.start-button:hover {
+.spelling-ie .start-button:hover {
   transform: scale(1.05);
-  opacity: 0.9;
 }
 
-.instructions {
+.spelling-ie .instructions {
   max-width: 800px;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: var(--color-surface);
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.instructions h3 {
-  margin-bottom: 0.5rem;
-  color: #333;
+.spelling-ie .instructions h3 {
+  margin-bottom: 0.4rem;
+  color: var(--color-cream);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
 }
 
-.instructions p {
-  color: #666;
+.spelling-ie .instructions p {
+  color: rgba(254, 249, 239, 0.55);
   line-height: 1.6;
+  font-size: 0.9rem;
 }
